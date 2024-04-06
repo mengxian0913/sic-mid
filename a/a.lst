@@ -1,9 +1,0 @@
-00000            MAIN    START   0    
-                  
-00000  DB2006    main    RD      stdin    
-00003  DF2004            WD      stdout    
-00006  4B2FF7            JSUB    main    
-                  
-                  
-00009  00        stdin   BYTE    0    
-0000A  01        stdout  BYTE    1    

@@ -12,20 +12,28 @@ inputData     RESB  1
 
 
 startGame     JSUB     clear
-              J        judger   
+              J        judger
 
 
 
 .---------------- Juger -------------.
+
 
 judger       LDX    #0
 stGameLp     LDCH   startMsg, X
              WD     stdout
              TIX    #22
              JLT    stGameLp
-             RD     stdin
+
+             LDL    #judger
+             STL    func
+             LDA    #49
+             STA    limitL
+             LDA    #50
+             STA    limitR
+             JSUB   stdInput
+             LDA    inData
              STA    mode          .  judger input the mode. (1) maxinum win (2) mininum win
-             RD     stdin         .  read '\r\n' 
              JSUB   clear         .  clear screen
              J      p1
 
@@ -36,11 +44,17 @@ mode         RESW   1
 
 .----------------   P1    -------------.
 
-p1          JSUB    PP1     . print "Player 1 "
+p1          LDL     #p1
+            STL     func
+            LDA     #48
+            STA     limitL
+            LDA     #57
+            STA     limitR
+            JSUB    PP1     . print "Player 1 "
             JSUB    PPI     . print rules
-            RD      stdin
+            JSUB    stdInput
+            LDA     inData
             STA     p1Num
-            RD      stdin   .   read '\r\n'
             JSUB    clear         .  clear screen
             J       p2
 
@@ -50,11 +64,17 @@ p1Num       RESW      1
 
 .----------------   P2    -------------.
 
-p2          JSUB    PP2     . print "Player 2 "
+p2          LDL     #p2
+            STL     func
+            LDA     #48
+            STA     limitL
+            LDA     #57
+            STA     limitR
+            JSUB    PP2     . print "Player 2 "
             JSUB    PPI     . print rules
-            RD      stdin
+            JSUB    stdInput
+            LDA     inData
             STA     p2Num
-            RD      stdin   .   read '\r\n'
             JSUB    clear         .  clear screen
             J       GR    .  get result of the game. 
 
@@ -63,7 +83,19 @@ p2Num       RESW      1
 .------------   Get result -------------.
 
 
-GR          LDX     #0   .  get result
+
+GR          LDX     #0
+modeLP      LDCH    modeMsg, X
+            WD      stdout
+            TIX     #6
+            JLT     modeLP
+            LDA     mode
+            COMP    #49
+            JEQ     PTMAX
+            J       PTMIN
+GR2         LDA     #10
+            WD      stdout
+            LDX     #0   .  get result
 GRLP        LDCH    grMsg, X
             WD      stdout
             TIX     #8
@@ -72,6 +104,24 @@ GRLP        LDCH    grMsg, X
             COMP    #49
             JEQ     mode1
             J       mode2
+
+PTMAX       LDX     #0
+maxLP       LDCH    maxMsg, X
+            WD      stdout
+            TIX     #7
+            JLT     maxLP
+            J       GR2
+
+PTMIN       LDX     #0
+minLP       LDCH    minMsg, X
+            WD      stdout
+            TIX     #7
+            JLT     minLP
+            J       GR2
+
+maxMsg      BYTE   C'maxinum'
+minMsg      BYTE   C'mininum'
+modeMsg     BYTE   C'mode: '
 
 
 
@@ -188,7 +238,7 @@ clearLp   STA     tmpLine
           RSUB
           
 
-lines     WORD    50
+lines     WORD    1000
 tmpLine   RESW    1
 
 
@@ -201,24 +251,48 @@ endl      STA     tmp
 tmp       RESW    1
 
 
+
+
+.--------------------  Stander Input ------------------.
+
+
+
+
+stdInput     RD         stdin
+             J          ffST     . stored first integer
+
+
+endInput     LDA        inData   . 判斷 0 ~ 9
+             COMP       limitL 
+             JLT        reInput 
+             COMP       limitR
+             JGT        reInput 
+             RSUB
+
+
+
+ffST         STA        inData
+             RD         stdin
+             COMP       #10
+             JEQ        endInput 
+
+IPLP         RD         stdin
+             COMP       #10
+             JEQ        reInput        
+             J          IPLP
+
+
+reInput     JSUB         clear
+            LDL          func 
+            RSUB
+inData      RESW    1
+limitL      RESW    1
+limitR      RESW    1
+
+
 .--------------------- variables -----------------------.
 
 instr         BYTE    C'Welcome to BB Game. Enter to start the game.'
 stdin         BYTE    0
 stdout        BYTE    1
-
-
-
-
-EXIT          TD      stdout
-              JEQ     EXIT 
-              LDX     #0
-exitPloop     LDCH    exitMsg,  X
-              WD      stdout
-              TIX     #9
-              JLT     exitPloop
-              LDA     #10
-              WD      stdout
-              RSUB
-
-exitMsg     BYTE    C'Thank you'
+func          RESW    1

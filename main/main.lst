@@ -1,0 +1,298 @@
+00000            MAIN        START   0    
+                  
+00000  4B2236    first       JSUB    clear    
+00003  4B2215                JSUB    printInstr    
+00006  E322D1    startInput  TD      stdin    
+00009  332FFA                JEQ     startInput    
+0000C  DB22CB                RD      stdin    
+0000F  29000A                COMP    #10    
+00012  332004                JEQ     startGame    
+00015  4B2FE8                JSUB    first    
+00018  00        inputData   RESB    1    
+                  
+                  
+00019  4B221D    startGame   JSUB    clear    
+0001C  3F2000                J       judger    
+                  
+                  
+                  
+                  . ---------------- Juger -------------.
+                  
+                  
+0001F  050000    judger      LDX     #0    
+00022  53A02A    stGameLp    LDCH    startMsg,X    
+00025  DF22B3                WD      stdout    
+00028  2D0016                TIX     #22    
+0002B  3B2FF4                JLT     stGameLp    
+                  
+0002E  092FEE                LDL     #judger    
+00031  1722A8                STL     func    
+00034  010031                LDA     #49    
+00037  0F226E                STA     limitL    
+0003A  010032                LDA     #50    
+0003D  0F226B                STA     limitR    
+00040  4B2229                JSUB    stdInput    
+00043  03225F                LDA     inData    
+00046  0F201C                STA     mode    . judger input the mode. (1) maxinum win (2) mininum win
+00049  4B21ED                JSUB    clear    . clear screen
+0004C  3F2019                J       p1    
+                  
+                  
+                  
+0004F  4A....20  startMsg    BYTE    C'Juger Input: (1 | 2): '    
+00065  000000    mode        RESW    1    
+                  
+                  . ----------------   P1    -------------.
+                  
+00068  092FFD    p1          LDL     #p1    
+0006B  17226E                STL     func    
+0006E  010030                LDA     #48    
+00071  0F2234                STA     limitL    
+00074  010039                LDA     #57    
+00077  0F2231                STA     limitR    
+0007A  4B213E                JSUB    PP1    . print "Player 1 "
+0007D  4B2171                JSUB    PPI    . print rules
+00080  4B21E9                JSUB    stdInput    
+00083  03221F                LDA     inData    
+00086  0F2006                STA     p1Num    
+00089  4B21AD                JSUB    clear    . clear screen
+0008C  3F2003                J       p2    
+                  
+                  
+0008F  000000    p1Num       RESW    1    
+                  
+                  
+                  . ----------------   P2    -------------.
+                  
+00092  092FFD    p2          LDL     #p2    
+00095  172244                STL     func    
+00098  010030                LDA     #48    
+0009B  0F220A                STA     limitL    
+0009E  010039                LDA     #57    
+000A1  0F2207                STA     limitR    
+000A4  4B2126                JSUB    PP2    . print "Player 2 "
+000A7  4B2147                JSUB    PPI    . print rules
+000AA  4B21BF                JSUB    stdInput    
+000AD  0321F5                LDA     inData    
+000B0  0F2006                STA     p2Num    
+000B3  4B2183                JSUB    clear    . clear screen
+000B6  3F2003                J       GR    . get result of the game.
+                  
+000B9  000000    p2Num       RESW    1    
+                  
+                  . ------------   Get result -------------.
+                  
+                  
+                  
+000BC  050000    GR          LDX     #0    
+000BF  53A068    modeLP      LDCH    modeMsg,X    
+000C2  DF2216                WD      stdout    
+000C5  2D0006                TIX     #6    
+000C8  3B2FF4                JLT     modeLP    
+000CB  032F97                LDA     mode    
+000CE  290031                COMP    #49    
+000D1  332024                JEQ     PTMAX    
+000D4  3F2033                J       PTMIN    
+000D7  01000A    GR2         LDA     #10    
+000DA  DF21FE                WD      stdout    
+000DD  050000                LDX     #0    . get result
+000E0  53A0B3    GRLP        LDCH    grMsg,X    
+000E3  DF21F5                WD      stdout    
+000E6  2D0008                TIX     #8    
+000E9  3B2FF4                JLT     GRLP    
+000EC  032F76                LDA     mode    
+000EF  290031                COMP    #49    
+000F2  33203B                JEQ     mode1    
+000F5  3F2047                J       mode2    
+                  
+000F8  050000    PTMAX       LDX     #0    
+000FB  53A01E    maxLP       LDCH    maxMsg,X    
+000FE  DF21DA                WD      stdout    
+00101  2D0007                TIX     #7    
+00104  3B2FF4                JLT     maxLP    
+00107  3F2FCD                J       GR2    
+                  
+0010A  050000    PTMIN       LDX     #0    
+0010D  53A013    minLP       LDCH    minMsg,X    
+00110  DF21C8                WD      stdout    
+00113  2D0007                TIX     #7    
+00116  3B2FF4                JLT     minLP    
+00119  3F2FBB                J       GR2    
+                  
+0011C  6D....6D  maxMsg      BYTE    C'maxinum'    
+00123  6D....6D  minMsg      BYTE    C'mininum'    
+0012A  6D....20  modeMsg     BYTE    C'mode: '    
+                  
+                  
+                  
+                  
+00130  032F5C    mode1       LDA     p1Num    
+00133  2B2F83                COMP    p2Num    
+00136  372015                JGT     p1win    
+00139  3B202A                JLT     p2win    
+0013C  33203F                JEQ     tie    
+                  
+0013F  032F4D    mode2       LDA     p1Num    
+00142  2B2F74                COMP    p2Num    
+00145  3B2006                JLT     p1win    
+00148  37201B                JGT     p2win    
+0014B  332030                JEQ     tie    
+                  
+                  
+0014E  050000    p1win       LDX     #0    
+00151  53A04A    p1Loop      LDCH    p1Msg,X    
+00154  DF2184                WD      stdout    
+00157  2D000D                TIX     #13    
+0015A  3B2FF4                JLT     p1Loop    
+0015D  4B20FA                JSUB    endl    
+00160  DB2177                RD      stdin    
+00163  3F2E9A                J       first    
+                  
+                  
+00166  050000    p2win       LDX     #0    
+00169  53A03F    p2Loop      LDCH    p2Msg,X    
+0016C  DF216C                WD      stdout    
+0016F  2D000D                TIX     #13    
+00172  3B2FF4                JLT     p2Loop    
+00175  4B20E2                JSUB    endl    
+00178  DB215F                RD      stdin    
+0017B  3F2E82                J       first    
+                  
+                  
+                  
+0017E  050000    tie         LDX     #0    
+00181  53A034    tieLoop     LDCH    tieMsg,X    
+00184  DF2154                WD      stdout    
+00187  2D0003                TIX     #3    
+0018A  3B2FF4                JLT     tieLoop    
+0018D  4B20CA                JSUB    endl    
+00190  DB2147                RD      stdin    
+00193  3F2E6A                J       first    
+                  
+                  
+                  
+                  
+00196  52....20  grMsg       BYTE    C'Result: '    
+0019E  50....21  p1Msg       BYTE    C'Player 1 win!'    
+001AB  50....21  p2Msg       BYTE    C'Player 2 win!'    
+001B8  544945    tieMsg      BYTE    C'TIE'    
+                  
+                  . --------------------     Print Play Instruction   --------------------.
+                  
+                  . PP1
+001BB  050000    PP1         LDX     #0    
+001BE  53A01E    PP1LP       LDCH    pp1Msg,X    
+001C1  DF2117                WD      stdout    
+001C4  2D0009                TIX     #9    
+001C7  3B2FF4                JLT     PP1LP    
+001CA  4F0000                RSUB        
+                  
+                  . PP2
+001CD  050000    PP2         LDX     #0    
+001D0  53A015    PP2LP       LDCH    pp2Msg,X    
+001D3  DF2105                WD      stdout    
+001D6  2D0009                TIX     #9    
+001D9  3B2FF4                JLT     PP2LP    
+001DC  4F0000                RSUB        
+                  
+                  
+001DF  50....20  pp1Msg      BYTE    C'Player 1 '    
+001E8  50....20  pp2Msg      BYTE    C'Player 2 '    
+                  
+                  
+                  . PPI
+001F1  050000    PPI         LDX     #0    
+001F4  53A00C    PPILP       LDCH    ppiMsg,X    
+001F7  DF20E1                WD      stdout    
+001FA  2D0018                TIX     #24    
+001FD  3B2FF4                JLT     PPILP    
+00200  4F0000                RSUB        
+                  
+00203  45....20  ppiMsg      BYTE    C'Enter a number:(0 - 9): '    
+                  
+                  . Print instructions for game.
+0021B  E320BD    printInstr  TD      stdout    
+0021E  332FFA                JEQ     printInstr    
+00221  050000                LDX     #0    
+00224  53A087    ploop       LDCH    instr,X    
+00227  DF20B1                WD      stdout    
+0022A  2D002C                TIX     #44    
+0022D  3B2FF4                JLT     ploop    
+00230  01000A                LDA     #10    
+00233  DF20A5                WD      stdout    
+00236  4F0000                RSUB        
+                  
+                  
+                  
+                  . --------------------  stdout  ------------------------.
+                  
+                  
+00239  010000    clear       LDA     #0    
+0023C  0F2018    clearLp     STA     tmpLine    
+0023F  01000A                LDA     #10    
+00242  DF2096                WD      stdout    
+00245  03200F                LDA     tmpLine    
+00248  190001                ADD     #1    
+0024B  2B2006                COMP    lines    
+0024E  3B2FEB                JLT     clearLp    
+00251  4F0000                RSUB        
+                  
+                  
+00254  0003E8    lines       WORD    1000    
+00257  000000    tmpLine     RESW    1    
+                  
+                  
+0025A  0F200C    endl        STA     tmp    
+0025D  01000A                LDA     #10    
+00260  DF2078                WD      stdout    
+00263  032003                LDA     tmp    
+00266  4F0000                RSUB        
+                  
+00269  000000    tmp         RESW    1    
+                  
+                  
+                  
+                  
+                  . --------------------  Stander Input ------------------.
+                  
+                  
+                  
+                  
+0026C  DB206B    stdInput    RD      stdin    
+0026F  3F2012                J       ffST    . stored first integer
+                  
+                  
+00272  032030    endInput    LDA     inData    . 判斷 0 ~ 9
+00275  2B2030                COMP    limitL    
+00278  3B2021                JLT     reInput    
+0027B  2B202D                COMP    limitR    
+0027E  37201B                JGT     reInput    
+00281  4F0000                RSUB        
+                  
+                  
+                  
+00284  0F201E    ffST        STA     inData    
+00287  DB2050                RD      stdin    
+0028A  29000A                COMP    #10    
+0028D  332FE2                JEQ     endInput    
+                  
+00290  DB2047    IPLP        RD      stdin    
+00293  29000A                COMP    #10    
+00296  332003                JEQ     reInput    
+00299  3F2FF4                J       IPLP    
+                  
+                  
+0029C  4B2F9A    reInput     JSUB    clear    
+0029F  0B203A                LDL     func    
+002A2  4F0000                RSUB        
+002A5  000000    inData      RESW    1    
+002A8  000000    limitL      RESW    1    
+002AB  000000    limitR      RESW    1    
+                  
+                  
+                  . --------------------- variables -----------------------.
+                  
+002AE  57....2E  instr       BYTE    C'Welcome to BB Game. Enter to start the game.'    
+002DA  00        stdin       BYTE    0    
+002DB  01        stdout      BYTE    1    
+002DC  000000    func        RESW    1    
