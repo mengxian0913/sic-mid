@@ -1,0 +1,12 @@
+00000            MAIN    START   0    
+                  
+00000  E3201A    OUTLP   TD      OUTDEV    
+00003  332FFA            JEQ     OUTLP    
+00006  532003            LDCH    TEXT    
+00009  DF2011            WD      OUTDEV    
+                  
+                  
+0000C  48....41  TEXT    BYTE    C'HELLO WORLDAAAAAA'    . // 換行字符
+0001D  01        OUTDEV  BYTE    1    
+0001E                    END     MAIN    
+                  

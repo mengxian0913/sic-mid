@@ -1,0 +1,61 @@
+***** Section <default> *****
+Stats: size=562  blocks=562  symbols=50  literals=0  relocations=0
+Blocks
+    name        start   size  #ins #dir #sto
+    <default>   00000  00232   129   14    6
+Symbols
+    name            hex       dec  scope     kind      type      description
+    EXIT         00020B       523  local     relative  code      label
+    GR           000086       134  local     relative  code      label
+    GRLP         000089       137  local     relative  code      label
+    MAIN         000000         0  exported  relative  code      label
+    PP1          00012C       300  local     relative  code      label
+    PP1LP        00012F       303  local     relative  code      label
+    PP2          00013E       318  local     relative  code      label
+    PP2LP        000141       321  local     relative  code      label
+    PPI          000162       354  local     relative  code      label
+    PPILP        000165       357  local     relative  code      label
+    clear        0001AA       426  local     relative  code      label
+    clearLp      0001AD       429  local     relative  code      label
+    endl         0001CB       459  local     relative  code      label
+    exitMsg      000229       553  local     relative  data      label
+    exitPloop    000214       532  local     relative  code      label
+    first        000000         0  local     relative  code      label
+    grMsg        000107       263  local     relative  data      label
+    inputData    000018        24  local     relative  data      label
+    instr        0001DD       477  local     relative  data      label
+    judger       00001F        31  local     relative  code      label
+    lines        0001C5       453  local     relative  data      label
+    mode         000053        83  local     relative  data      label
+    mode1        0000A1       161  local     relative  code      label
+    mode2        0000B0       176  local     relative  code      label
+    p1           000056        86  local     relative  code      label
+    p1Loop       0000C2       194  local     relative  code      label
+    p1Msg        00010F       271  local     relative  data      label
+    p1Num        00006B       107  local     relative  data      label
+    p1win        0000BF       191  local     relative  code      label
+    p2           00006E       110  local     relative  code      label
+    p2Loop       0000DA       218  local     relative  code      label
+    p2Msg        00011C       284  local     relative  data      label
+    p2Num        000083       131  local     relative  data      label
+    p2win        0000D7       215  local     relative  code      label
+    ploop        000195       405  local     relative  code      label
+    pp1Msg       000150       336  local     relative  data      label
+    pp2Msg       000159       345  local     relative  data      label
+    ppiMsg       000174       372  local     relative  data      label
+    printInstr   00018C       396  local     relative  code      label
+    stGameLp     000022        34  local     relative  code      label
+    startGame    000019        25  local     relative  code      label
+    startInput   000006         6  local     relative  code      label
+    startMsg     00003D        61  local     relative  data      label
+    stdin        000209       521  local     relative  data      label
+    stdout       00020A       522  local     relative  data      label
+    tie          0000EF       239  local     relative  code      label
+    tieLoop      0000F2       242  local     relative  code      label
+    tieMsg       000129       297  local     relative  data      label
+    tmp          0001DA       474  local     relative  data      label
+    tmpLine      0001C8       456  local     relative  data      label
+Literals
+    label   definition
+Relocations
+    address length flag symbol
