@@ -1,40 +1,37 @@
 MAIN    START   0
 
-first         JSUB    clear
-              JSUB    printInstr
-startInput    TD      stdin
-              JEQ     startInput 
-              RD      stdin
-              COMP    #10
-              JEQ     startGame    
-              JSUB    first 
-inputData     RESB  1
+first         JSUB	clear		. 清空畫面
+              JSUB	printInstr	. 輸出遊戲說明
+startInput    TD	stdin		. 讀取輸入裝置
+              JEQ	startInput 	. 讀不到則重複讀取
+              RD	stdin		. 讀取使用者輸入
+              COMP	#10		. 與Enter的ASCII code比較
+              JEQ	startGame    	. 若使用者點擊Enter則開始遊戲
+              JSUB	first 		. 無限遊戲迴圈
+
+startGame     JSUB	clear		. 清空畫面
+              J		judger   	. 跳到選擇比大還是比小
 
 
-startGame     JSUB     clear
-              J        judger
+.---------------- Judger -------------.
 
 
+judger       LDX    #0			. 暫存器X = 0
+stGameLp     LDCH   startMsg, X		. 將startMsg[X]存到A
+             WD     stdout		. 將startMsg[X]寫在terminal
+             TIX    #23			. X+1與23比較
+             JLT    stGameLp		. <23時 跳回stGameLp進行迴圈
 
-.---------------- Juger -------------.
-
-
-judger       LDX    #0
-stGameLp     LDCH   startMsg, X
-             WD     stdout
-             TIX    #22
-             JLT    stGameLp
-
-             LDL    #judger
-             STL    func
-             LDA    #49
-             STA    limitL
-             LDA    #50
-             STA    limitR
+             LDL    #judger		. L = judger記憶體位址
+             STL    func		. func = L = judger記憶體位址
+             LDA    #49			. A = 49 (1的ASCII)
+             STA    limitL		. limitL = A = 49
+             LDA    #50			. A = 50 (2的ASCII)
+             STA    limitR		. limitR = A = 50
              JSUB   stdInput
              LDA    inData
-             STA    mode          .  judger input the mode. (1) maxinum win (2) mininum win
-             JSUB   clear         .  clear screen
+             STA    mode          	. 將暫存器A的值存到mode ( 比最大為 1 / 最小 2 )
+             JSUB   clear		. 清空畫面
              J      p1
 
 
@@ -262,13 +259,12 @@ stdInput     RD         stdin
              J          ffST     . stored first integer
 
 
-endInput     LDA        inData   . 判斷 0 ~ 9
-             COMP       limitL 
+endInput     LDA        inData   . 
+             COMP       limitL	 . 
              JLT        reInput 
              COMP       limitR
              JGT        reInput 
              RSUB
-
 
 
 ffST         STA        inData
