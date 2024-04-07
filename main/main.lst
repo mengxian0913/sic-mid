@@ -1,298 +1,327 @@
 00000            MAIN        START   0    
                   
-00000  4B2236    first       JSUB    clear    
-00003  4B2215                JSUB    printInstr    
-00006  E322D1    startInput  TD      stdin    
-00009  332FFA                JEQ     startInput    
-0000C  DB22CB                RD      stdin    
-0000F  29000A                COMP    #10    
-00012  332004                JEQ     startGame    
-00015  4B2FE8                JSUB    first    
-00018  00        inputData   RESB    1    
+00000  4B22E3    first       JSUB    clear    . 清空畫面
+00003  4B222B                JSUB    printInstr    . 輸出遊戲說明
+00006  E3238E    startInput  TD      stdin    . 讀取輸入裝置
+00009  332FFA                JEQ     startInput    . 讀不到則重複讀取
+0000C  DB2388                RD      stdin    . 讀取使用者輸入
+0000F  DB2385                RD      stdin    . 讀取使用者輸入
+00012  29000A                COMP    #10    . 與Enter的ASCII code比較
+00015  332003                JEQ     startGame    . 若使用者點擊Enter則開始遊戲
+00018  4B2FE5                JSUB    first    . 跳回 first
+                  
+0001B  4B22C8    startGame   JSUB    clear    . 清空畫面
+0001E  3F2000                J       judger    . 強制跳到 judger (選擇比大還是比小)
                   
                   
-00019  4B221D    startGame   JSUB    clear    
-0001C  3F2000                J       judger    
+                  . ---------------- Judger -------------.
+                  
+                  . 遊戲判定 .
+00021  050000    judger      LDX     #0    . 暫存器 X = 0
+00024  53A02A    stGameLp    LDCH    startMsg,X    . 將 startMsg[X] 存到 A
+00027  DF236E                WD      stdout    . 將 startMsg[X] 寫在 terminal
+0002A  2D0016                TIX     #22    . X + 1 與 22 比較
+0002D  3B2FF4                JLT     stGameLp    . < 22 時 跳回 stGameLp 進行迴圈
+                  
+00030  092FEE                LDL     #judger    . L = judger記憶體位址
+00033  172363                STL     func    . func = L = judger記憶體位址
+00036  010031                LDA     #49    . A = 49 (1的ASCII)
+00039  0F2325                STA     limitL    . limitL = A = 49
+0003C  010032                LDA     #50    . A = 50 (2的ASCII)
+0003F  0F2322                STA     limitR    . limitR = A = 50
+00042  4B22D4                JSUB    stdInput    . 跳到stdInput (讀取輸入)
+00045  032316                LDA     inData    . A = inData
+00048  0F201C                STA     mode    . 將暫存器A的值存到mode ( 比最大為 1 / 最小 2 / 終止 0)
+0004B  4B2298                JSUB    clear    . 清空畫面
+0004E  3F2019                J       p1    . 強制跳到p1 (輸入1號玩家的數字)
+                  
+00051  4A....20  startMsg    BYTE    C'Judger Input (1 | 2): '    . 要輸出的文字 (判定輸入: 1或2)
+00067  000000    mode        RESW    1    . 比較模式
+                  
+                  . ----------------   Player1    -------------.
+                  
+0006A  092FFD    p1          LDL     #p1    . L = p1的記憶體位址
+0006D  172329                STL     func    . func = L (p1的記憶體位址)
+00070  010030                LDA     #48    . A = 48 (0的ASCII)
+00073  0F22EB                STA     limitL    . limitL = A = 48
+00076  010039                LDA     #57    . A = 57 (9的ASCII)
+00079  0F22E8                STA     limitR    . limitR = A = 57
+0007C  4B2150                JSUB    PP1    . 印出 "Player 1: "
+0007F  4B2285                JSUB    endl    . 換行
+00082  4B2182                JSUB    PPI    . 印出 "Enter a number (0 - 9): "
+00085  4B2291                JSUB    stdInput    . 跳到stdInput (讀取輸入)
+00088  0322D3                LDA     inData    . A = inData
+0008B  0F2006                STA     p1Num    . p1Num = A = inData
+0008E  4B2255                JSUB    clear    . 清空畫面
+00091  3F2003                J       p2    . 強制跳到p2 (輸入2號玩家的數字)
                   
                   
-                  
-                  . ---------------- Juger -------------.
-                  
-                  
-0001F  050000    judger      LDX     #0    
-00022  53A02A    stGameLp    LDCH    startMsg,X    
-00025  DF22B3                WD      stdout    
-00028  2D0016                TIX     #22    
-0002B  3B2FF4                JLT     stGameLp    
-                  
-0002E  092FEE                LDL     #judger    
-00031  1722A8                STL     func    
-00034  010031                LDA     #49    
-00037  0F226E                STA     limitL    
-0003A  010032                LDA     #50    
-0003D  0F226B                STA     limitR    
-00040  4B2229                JSUB    stdInput    
-00043  03225F                LDA     inData    
-00046  0F201C                STA     mode    . judger input the mode. (1) maxinum win (2) mininum win
-00049  4B21ED                JSUB    clear    . clear screen
-0004C  3F2019                J       p1    
-                  
-                  
-                  
-0004F  4A....20  startMsg    BYTE    C'Juger Input: (1 | 2): '    
-00065  000000    mode        RESW    1    
-                  
-                  . ----------------   P1    -------------.
-                  
-00068  092FFD    p1          LDL     #p1    
-0006B  17226E                STL     func    
-0006E  010030                LDA     #48    
-00071  0F2234                STA     limitL    
-00074  010039                LDA     #57    
-00077  0F2231                STA     limitR    
-0007A  4B213E                JSUB    PP1    . print "Player 1 "
-0007D  4B2171                JSUB    PPI    . print rules
-00080  4B21E9                JSUB    stdInput    
-00083  03221F                LDA     inData    
-00086  0F2006                STA     p1Num    
-00089  4B21AD                JSUB    clear    . clear screen
-0008C  3F2003                J       p2    
-                  
-                  
-0008F  000000    p1Num       RESW    1    
+00094  000000    p1Num       RESW    1    . 用來存1號玩家的數字
                   
                   
                   . ----------------   P2    -------------.
                   
-00092  092FFD    p2          LDL     #p2    
-00095  172244                STL     func    
-00098  010030                LDA     #48    
-0009B  0F220A                STA     limitL    
-0009E  010039                LDA     #57    
-000A1  0F2207                STA     limitR    
-000A4  4B2126                JSUB    PP2    . print "Player 2 "
-000A7  4B2147                JSUB    PPI    . print rules
-000AA  4B21BF                JSUB    stdInput    
-000AD  0321F5                LDA     inData    
-000B0  0F2006                STA     p2Num    
-000B3  4B2183                JSUB    clear    . clear screen
-000B6  3F2003                J       GR    . get result of the game.
+00097  092FFD    p2          LDL     #p2    . L = p2的記憶體位址
+0009A  1722FC                STL     func    . func = L (p2的記憶體位址)
+0009D  010030                LDA     #48    . A = 48 (0的ASCII)
+000A0  0F22BE                STA     limitL    . limitL = A = 48
+000A3  010039                LDA     #57    . A = 57 (9的ASCII)
+000A6  0F22BB                STA     limitR    . limitR = A = 57
+000A9  4B2135                JSUB    PP2    . 印出 "Player 2: "
+000AC  4B2258                JSUB    endl    . 換行
+000AF  4B2155                JSUB    PPI    . 印出 "Enter a number (0 - 9): "
+000B2  4B2264                JSUB    stdInput    . 跳到stdInput (讀取輸入)
+000B5  0322A6                LDA     inData    . A = inData
+000B8  0F2006                STA     p2Num    . p2Num = A = inData
+000BB  4B2228                JSUB    clear    . 清空畫面
+000BE  3F2003                J       GR    . 強制跳到 GR (顯示比較結果)
                   
-000B9  000000    p2Num       RESW    1    
+000C1  000000    p2Num       RESW    1    . 用來存2號玩家的數字
                   
                   . ------------   Get result -------------.
                   
+                  . 顯示結果 .
+000C4  050000    GR          LDX     #0    . X = 0
+000C7  53A068    modeLP      LDCH    modeMsg,X    . A = modeMsg[X]
+000CA  DF22CB                WD      stdout    . 將 modeMsg[X] 寫在 terminal
+000CD  2D0006                TIX     #6    . X + 1 與 6 比較
+000D0  3B2FF4                JLT     modeLP    . < 6 跳回 modeLP 進行迴圈
+000D3  032F91                LDA     mode    . A = mode
+000D6  290031                COMP    #49    . 與 49 (1的ASCII) 比較
+000D9  332024                JEQ     PTMAX    . A = 49 跳到 PTMAX (輸出提示訊息顯示要比大)
+000DC  3F2033                J       PTMIN    . A != 49 強制跳到 PTMIN (輸出提示訊息顯示要比小)
+000DF  01000A    GR2         LDA     #10    . A = 10 (Enter的 ASCII)
+000E2  DF22B3                WD      stdout    . 在 terminal 輸出 A (換行)
+000E5  050000                LDX     #0    . X = 0
+000E8  53A0B9    GRLP        LDCH    grMsg,X    . A = grMsg[X]
+000EB  DF22AA                WD      stdout    . 將 grMsg[X] 寫在 terminal
+000EE  2D0008                TIX     #8    . X + 1 與 8 比較
+000F1  3B2FF4                JLT     GRLP    . < 8 跳回 GRLP 進行迴圈
+000F4  032F70                LDA     mode    . A = mode
+000F7  290031                COMP    #49    . 與 49 (1的ASCII) 比較
+000FA  33203B                JEQ     mode1    . A = 49 跳到 mode1 (比大)
+000FD  3F2047                J       mode2    . A != 49 跳到 mode2 (比小)
+                  
+00100  050000    PTMAX       LDX     #0    . X = 0
+00103  53A01E    maxLP       LDCH    maxMsg,X    . A = maxMsg[X]
+00106  DF228F                WD      stdout    . 將 maxMsg[X] 寫在 terminal
+00109  2D0007                TIX     #7    . X + 1 與 7 比較
+0010C  3B2FF4                JLT     maxLP    . < 7 跳回 maxLP 進行迴圈
+0010F  3F2FCD                J       GR2    . 強制跳到 GR2
+                  
+00112  050000    PTMIN       LDX     #0    . X = 0
+00115  53A013    minLP       LDCH    minMsg,X    . A = minMsg[X]
+00118  DF227D                WD      stdout    . 將 minMsg[X] 寫在 terminal
+0011B  2D0007                TIX     #7    . X + 1 與 7 比較
+0011E  3B2FF4                JLT     minLP    . < 7 跳回 minLP 進行迴圈
+00121  3F2FBB                J       GR2    . 強制跳到 GR2
+                  
+00124  6D....6D  maxMsg      BYTE    C'maxinum'    . 提示訊息為比大
+0012B  6D....6D  minMsg      BYTE    C'mininum'    . 提示訊息為比小
+00132  6D....20  modeMsg     BYTE    C'mode: '    . 輸出比較模式
                   
                   
-000BC  050000    GR          LDX     #0    
-000BF  53A068    modeLP      LDCH    modeMsg,X    
-000C2  DF2216                WD      stdout    
-000C5  2D0006                TIX     #6    
-000C8  3B2FF4                JLT     modeLP    
-000CB  032F97                LDA     mode    
-000CE  290031                COMP    #49    
-000D1  332024                JEQ     PTMAX    
-000D4  3F2033                J       PTMIN    
-000D7  01000A    GR2         LDA     #10    
-000DA  DF21FE                WD      stdout    
-000DD  050000                LDX     #0    . get result
-000E0  53A0B3    GRLP        LDCH    grMsg,X    
-000E3  DF21F5                WD      stdout    
-000E6  2D0008                TIX     #8    
-000E9  3B2FF4                JLT     GRLP    
-000EC  032F76                LDA     mode    
-000EF  290031                COMP    #49    
-000F2  33203B                JEQ     mode1    
-000F5  3F2047                J       mode2    
+00138  032F59    mode1       LDA     p1Num    . 將 p1Num 存入 A
+0013B  2B2F83                COMP    p2Num    . 讓 p1Num (A) 與 p2Num 比較
+0013E  372015                JGT     p1win    . p1Num > p2Num 跳到 p1win (1號玩家贏了)
+00141  3B202D                JLT     p2win    . p1Num < p2Num 跳到 p2win (2號玩家贏了)
+00144  332045                JEQ     tie    . p1Num = p2Num 跳到 tie (平手)
                   
-000F8  050000    PTMAX       LDX     #0    
-000FB  53A01E    maxLP       LDCH    maxMsg,X    
-000FE  DF21DA                WD      stdout    
-00101  2D0007                TIX     #7    
-00104  3B2FF4                JLT     maxLP    
-00107  3F2FCD                J       GR2    
-                  
-0010A  050000    PTMIN       LDX     #0    
-0010D  53A013    minLP       LDCH    minMsg,X    
-00110  DF21C8                WD      stdout    
-00113  2D0007                TIX     #7    
-00116  3B2FF4                JLT     minLP    
-00119  3F2FBB                J       GR2    
-                  
-0011C  6D....6D  maxMsg      BYTE    C'maxinum'    
-00123  6D....6D  minMsg      BYTE    C'mininum'    
-0012A  6D....20  modeMsg     BYTE    C'mode: '    
+00147  032F4A    mode2       LDA     p1Num    
+0014A  2B2F74                COMP    p2Num    
+0014D  3B2006                JLT     p1win    . p1Num < p2Num 跳到 p1win
+00150  37201E                JGT     p2win    . p1Num > p2Num 跳到 p2win
+00153  332036                JEQ     tie    
                   
                   
+00156  050000    p1win       LDX     #0    . X = 0
+00159  53A050    p1Loop      LDCH    p1Msg,X    . 將 p1Msg[X] 存入 A
+0015C  DF2239                WD      stdout    . 將 p1Msg[X] 寫在 terminal
+0015F  2D000D                TIX     #13    . 將 X + 1 與 13 比較
+00162  3B2FF4                JLT     p1Loop    . < 13 時 跳回 p1Loop 進行迴圈
+00165  4B219F                JSUB    endl    . 輸出換行
+00168  DB222C                RD      stdin    . 讀取使用者輸入
+0016B  DB2229                RD      stdin    . 讀取使用者輸入
+0016E  3F2E8F                J       first    . 強制跳回first (重新開始遊戲)
                   
                   
-00130  032F5C    mode1       LDA     p1Num    
-00133  2B2F83                COMP    p2Num    
-00136  372015                JGT     p1win    
-00139  3B202A                JLT     p2win    
-0013C  33203F                JEQ     tie    
-                  
-0013F  032F4D    mode2       LDA     p1Num    
-00142  2B2F74                COMP    p2Num    
-00145  3B2006                JLT     p1win    
-00148  37201B                JGT     p2win    
-0014B  332030                JEQ     tie    
+00171  050000    p2win       LDX     #0    . X = 0
+00174  53A042    p2Loop      LDCH    p2Msg,X    . 將 p2Msg[X] 存入A
+00177  DF221E                WD      stdout    . 將 p2Msg[X] 寫在 terminal
+0017A  2D000D                TIX     #13    . 將 X + 1 與 13 比較
+0017D  3B2FF4                JLT     p2Loop    . < 13 時 跳回 p2Loop 進行迴圈
+00180  4B2184                JSUB    endl    . 輸出換行
+00183  DB2211                RD      stdin    . 讀取使用者輸入
+00186  DB220E                RD      stdin    . 讀取使用者輸入
+00189  3F2E74                J       first    . 強制跳回first (重新開始遊戲)
                   
                   
-0014E  050000    p1win       LDX     #0    
-00151  53A04A    p1Loop      LDCH    p1Msg,X    
-00154  DF2184                WD      stdout    
-00157  2D000D                TIX     #13    
-0015A  3B2FF4                JLT     p1Loop    
-0015D  4B20FA                JSUB    endl    
-00160  DB2177                RD      stdin    
-00163  3F2E9A                J       first    
-                  
-                  
-00166  050000    p2win       LDX     #0    
-00169  53A03F    p2Loop      LDCH    p2Msg,X    
-0016C  DF216C                WD      stdout    
-0016F  2D000D                TIX     #13    
-00172  3B2FF4                JLT     p2Loop    
-00175  4B20E2                JSUB    endl    
-00178  DB215F                RD      stdin    
-0017B  3F2E82                J       first    
-                  
-                  
-                  
-0017E  050000    tie         LDX     #0    
-00181  53A034    tieLoop     LDCH    tieMsg,X    
-00184  DF2154                WD      stdout    
-00187  2D0003                TIX     #3    
-0018A  3B2FF4                JLT     tieLoop    
-0018D  4B20CA                JSUB    endl    
-00190  DB2147                RD      stdin    
-00193  3F2E6A                J       first    
+0018C  050000    tie         LDX     #0    . X = 0
+0018F  53A034    tieLoop     LDCH    tieMsg,X    . 將 tieMsg[X] 存入 A
+00192  DF2203                WD      stdout    . 將 tieMsg[X] 寫在 terminal
+00195  2D0009                TIX     #9    . 將 X + 1 與 9 比較
+00198  3B2FF4                JLT     tieLoop    . < 9 時 跳回 tieLoop 進行迴圈
+0019B  4B2169                JSUB    endl    . 輸出換行
+0019E  DB21F6                RD      stdin    . 讀取使用者輸入
+001A1  3F2E5C                J       first    . 跳回 first (重新開始遊戲)
                   
                   
                   
                   
-00196  52....20  grMsg       BYTE    C'Result: '    
-0019E  50....21  p1Msg       BYTE    C'Player 1 win!'    
-001AB  50....21  p2Msg       BYTE    C'Player 2 win!'    
-001B8  544945    tieMsg      BYTE    C'TIE'    
+001A4  52....20  grMsg       BYTE    C'Result: '    . 輸出結果
+001AC  50....21  p1Msg       BYTE    C'Player 1 win!'    . 輸出1號玩家獲勝
+001B9  50....21  p2Msg       BYTE    C'Player 2 win!'    . 輸出2號玩家獲勝
+001C6  49....21  tieMsg      BYTE    C'Is a TIE!'    . 輸出平手
                   
                   . --------------------     Print Play Instruction   --------------------.
                   
-                  . PP1
-001BB  050000    PP1         LDX     #0    
-001BE  53A01E    PP1LP       LDCH    pp1Msg,X    
-001C1  DF2117                WD      stdout    
-001C4  2D0009                TIX     #9    
-001C7  3B2FF4                JLT     PP1LP    
-001CA  4F0000                RSUB        
+                  . PP1 (print player1 instruction) 印出"Player 1: " .
+001CF  050000    PP1         LDX     #0    . X = 0
+001D2  53A01E    PP1LP       LDCH    pp1Msg,X    . 將 pp1Msg[X] 存入 A
+001D5  DF21C0                WD      stdout    . 將 pp1Msg[X] 寫在 terminal
+001D8  2D000A                TIX     #10    . 將 X + 1 與 10 比較
+001DB  3B2FF4                JLT     PP1LP    . < 10 時 跳回 PP1LP 進行迴圈
+001DE  4F0000                RSUB        . 回到 p1 繼續執行剩下的程式
                   
-                  . PP2
-001CD  050000    PP2         LDX     #0    
-001D0  53A015    PP2LP       LDCH    pp2Msg,X    
-001D3  DF2105                WD      stdout    
-001D6  2D0009                TIX     #9    
-001D9  3B2FF4                JLT     PP2LP    
-001DC  4F0000                RSUB        
-                  
-                  
-001DF  50....20  pp1Msg      BYTE    C'Player 1 '    
-001E8  50....20  pp2Msg      BYTE    C'Player 2 '    
+                  . PP2 (print player2 instruction) 印出"Player 2: " .
+001E1  050000    PP2         LDX     #0    
+001E4  53A016    PP2LP       LDCH    pp2Msg,X    . 將pp2Msg[X]存入A
+001E7  DF21AE                WD      stdout    . 將pp2Msg[X]寫在terminal
+001EA  2D000A                TIX     #10    
+001ED  3B2FF4                JLT     PP2LP    . <10時 跳回PP2LP進行迴圈
+001F0  4F0000                RSUB        . 回到p2繼續執行剩下的程式
                   
                   
-                  . PPI
-001F1  050000    PPI         LDX     #0    
-001F4  53A00C    PPILP       LDCH    ppiMsg,X    
-001F7  DF20E1                WD      stdout    
-001FA  2D0018                TIX     #24    
-001FD  3B2FF4                JLT     PPILP    
-00200  4F0000                RSUB        
+001F3  50....20  pp1Msg      BYTE    C'Player 1: '    . PP1裡要輸出的訊息
+001FD  50....20  pp2Msg      BYTE    C'Player 2: '    . PP2裡要輸出的訊息
                   
-00203  45....20  ppiMsg      BYTE    C'Enter a number:(0 - 9): '    
                   
-                  . Print instructions for game.
-0021B  E320BD    printInstr  TD      stdout    
-0021E  332FFA                JEQ     printInstr    
-00221  050000                LDX     #0    
-00224  53A087    ploop       LDCH    instr,X    
-00227  DF20B1                WD      stdout    
-0022A  2D002C                TIX     #44    
-0022D  3B2FF4                JLT     ploop    
-00230  01000A                LDA     #10    
-00233  DF20A5                WD      stdout    
-00236  4F0000                RSUB        
+                  . 印出"Enter a number(0 - 9): " .
+00207  050000    PPI         LDX     #0    
+0020A  53A00C    PPILP       LDCH    ppiMsg,X    . 將ppiMsg[X]存入A
+0020D  DF2188                WD      stdout    . 將ppiMsg[X]寫在terminal
+00210  2D0018                TIX     #24    . 將X+1與24比較
+00213  3B2FF4                JLT     PPILP    . <24時 跳回PPILP進行迴圈
+00216  4F0000                RSUB        . 回到p1或p2繼續執行剩下的程式
                   
+00219  45....20  ppiMsg      BYTE    C'Enter a number (0 - 9): '    . 輸出提示訊息請使用者輸入數字
+                  
+                  . 印出遊戲說明 .
+00231  E32164    printInstr  TD      stdout    . 確認輸出裝置是否就緒
+00234  332FFA                JEQ     printInstr    . 未就緒則跳回 printInstr 持續確認
+                  
+00237  050000                LDX     #0    . 暫存器 X = 0
+0023A  53A045    ploop1      LDCH    instr1,X    . 將 instr1[X] 存入 A
+0023D  DF2158                WD      stdout    . 將 instr1[X] 寫在 terminal
+00240  2D0013                TIX     #19    . 將 X + 1 與 19 比較
+00243  3B2FF4                JLT     ploop1    . < 19 時 跳回 ploop 進行迴圈
+00246  4B20BE                JSUB    endl    . 輸出換行
+                  
+00249  050000                LDX     #0    . 暫存器 X = 0
+0024C  53A046    ploop2      LDCH    instr2,X    . 將 instr2[X] 存入 A
+0024F  DF2146                WD      stdout    . 將 instr2[X] 寫在 terminal
+00252  2D001C                TIX     #28    . 將 X + 1 與 28 比較
+00255  3B2FF4                JLT     ploop2    . < 28 時 跳回 ploop 進行迴圈
+00258  4B20AC                JSUB    endl    . 輸出換行
+                  
+0025B  050000                LDX     #0    . 暫存器 X = 0
+0025E  53A050    ploop3      LDCH    instr3,X    . 將 instr3[X] 存入 A
+00261  DF2134                WD      stdout    . 將 instr3[X] 寫在 terminal
+00264  2D0021                TIX     #33    . 將 X + 1 與 33 比較
+00267  3B2FF4                JLT     ploop3    . < 33 時 跳回 ploop 進行迴圈
+0026A  4B209A                JSUB    endl    . 輸出換行
+                  
+0026D  050000                LDX     #0    . 暫存器 X = 0
+00270  53A05F    ploop4      LDCH    instr4,X    . 將 instr4[X] 存入 A
+00273  DF2122                WD      stdout    . 將 instr4[X] 寫在 terminal
+00276  2D0014                TIX     #20    . 將 X + 1 與 20 比較
+00279  3B2FF4                JLT     ploop4    . < 20 時 跳回 ploop 進行迴圈
+0027C  4B2088                JSUB    endl    . 輸出換行
+0027F  3F2D84                J       startInput    . 跳回原本的程式繼續執行
+00282  57....21  instr1      BYTE    C'Welcome to B B See!'    . 遊戲開場白1
+00295  49....2E  instr2      BYTE    C'Input 1 or 2 to choose mode.'    . 遊戲開場白2
+002B1  41....2E  instr3      BYTE    C'And input two numbers to compare.'    . 遊戲開場白3
+002D2  45....2E  instr4      BYTE    C'Enter to continue...'    . 遊戲開場白4
                   
                   
                   . --------------------  stdout  ------------------------.
                   
+                  . 清空畫面 .
+002E6  010000    clear       LDA     #0    . 將 0 存入 A
+002E9  0F2018    clearLp     STA     tmpLine    . tmpLine = A
+002EC  01000A                LDA     #10    . 將 Enter 存入 A
+002EF  DF20A6                WD      stdout    . 輸出換行
+002F2  03200F                LDA     tmpLine    . A = tmpLine
+002F5  190001                ADD     #1    . A + 1
+002F8  2B2006                COMP    lines    . 與 50 比較
+002FB  3B2FEB                JLT     clearLp    . < 50 跳回 clearLp 進行迴圈
+002FE  4F0000                RSUB        
                   
-00239  010000    clear       LDA     #0    
-0023C  0F2018    clearLp     STA     tmpLine    
-0023F  01000A                LDA     #10    
-00242  DF2096                WD      stdout    
-00245  03200F                LDA     tmpLine    
-00248  190001                ADD     #1    
-0024B  2B2006                COMP    lines    
-0024E  3B2FEB                JLT     clearLp    
-00251  4F0000                RSUB        
+00301  000032    lines       WORD    50    . lines = 50
+00304  000000    tmpLine     RESW    1    . tmpLine的大小為 1 WORD
                   
+                  . 換行 .
+00307  0F200C    endl        STA     tmp    . tmp = A
+0030A  01000A                LDA     #10    . A = 10 (Enter)
+0030D  DF2088                WD      stdout    . 將 A (Enter) 寫入terminal
+00310  032003                LDA     tmp    . A = tmp
+00313  4F0000                RSUB        . 跳回原本的函式
                   
-00254  0003E8    lines       WORD    1000    
-00257  000000    tmpLine     RESW    1    
-                  
-                  
-0025A  0F200C    endl        STA     tmp    
-0025D  01000A                LDA     #10    
-00260  DF2078                WD      stdout    
-00263  032003                LDA     tmp    
-00266  4F0000                RSUB        
-                  
-00269  000000    tmp         RESW    1    
-                  
-                  
+00316  000000    tmp         RESW    1    . 存 A 原本的值
                   
                   
                   . --------------------  Stander Input ------------------.
                   
                   
+00319  DB207B    stdInput    RD      stdin    . 讀取使用者輸入
+0031C  290030                COMP    #48    . 與 48 (0的ASCII) 比較
+0031F  332045                JEQ     close    . A = 48 跳到 close (結束遊戲)
+00322  3F2012                J       ffST    . 強制跳到ffST (存第一個字元)
                   
                   
-0026C  DB206B    stdInput    RD      stdin    
-0026F  3F2012                J       ffST    . stored first integer
+00325  032036    endInput    LDA     inData    . A = inData
+00328  2B2036                COMP    limitL    . A (inData) 與 limitL 比較
+0032B  3B2027                JLT     reInput    . A < limitL 跳到 reInput (重新輸入)
+0032E  2B2033                COMP    limitR    . A 與 limitL 比較
+00331  372021                JGT     reInput    . A > limitR 跳到 reInput (重新輸入)
+00334  4F0000                RSUB        
                   
                   
-00272  032030    endInput    LDA     inData    . 判斷 0 ~ 9
-00275  2B2030                COMP    limitL    
-00278  3B2021                JLT     reInput    
-0027B  2B202D                COMP    limitR    
-0027E  37201B                JGT     reInput    
-00281  4F0000                RSUB        
+00337  0F2024    ffST        STA     inData    . inData = A
+0033A  DB205A                RD      stdin    . 讀取使用者輸入
+                  
+0033D  DB2057                RD      stdin    . 讀取使用者輸入
+00340  29000A                COMP    #10    . 與 10 (Enter) 比較
+00343  332FDF                JEQ     endInput    . 跳到endInput (判定輸入是否為1或2)
+                  
+00346  DB204E    IPLP        RD      stdin    . 讀取使用者輸入
+00349  DB204B                RD      stdin    . 讀取使用者輸入
+0034C  29000A                COMP    #10    . 與 10 (Enter) 比較
+0034F  332003                JEQ     reInput    . 跳到 reInput (重新輸入)
+00352  3F2FF1                J       IPLP    . 若非 Enter 則繼續讀取
                   
                   
+00355  4B2F8E    reInput     JSUB    clear    . 清空畫面
+00358  0B203E                LDL     func    . L = func
+0035B  4F0000                RSUB        
+0035E  000000    inData      RESW    1    . 用來存使用者輸入的值
+00361  000000    limitL      RESW    1    . 用來存輸入限制的最小值 (小於此值需重新輸入)
+00364  000000    limitR      RESW    1    . 用來存輸入限制的最大值 (大於此值須重新輸入)
                   
-00284  0F201E    ffST        STA     inData    
-00287  DB2050                RD      stdin    
-0028A  29000A                COMP    #10    
-0028D  332FE2                JEQ     endInput    
+                  . 結束遊戲 .
+00367  050000    close       LDX     #0    . 暫存器 X = 0
+0036A  53A00F    CLP         LDCH    endMsg,X    . 將 endMsg[X] 存入 A
+0036D  DF2028                WD      stdout    . 將 endMsg[X] 寫在 terminal
+00370  2D001B                TIX     #27    . 將 X + 1 與 27 比較
+00373  3B2FF4                JLT     CLP    . < 27 時 跳回 CLP 進行迴圈
+00376  4B2F8E                JSUB    endl    . 輸出換行
+00379  3F2020                J       bye    . 強制跳到 bye (結束程式)
                   
-00290  DB2047    IPLP        RD      stdin    
-00293  29000A                COMP    #10    
-00296  332003                JEQ     reInput    
-00299  3F2FF4                J       IPLP    
-                  
-                  
-0029C  4B2F9A    reInput     JSUB    clear    
-0029F  0B203A                LDL     func    
-002A2  4F0000                RSUB        
-002A5  000000    inData      RESW    1    
-002A8  000000    limitL      RESW    1    
-002AB  000000    limitR      RESW    1    
-                  
-                  
+0037C  53....7E  endMsg      BYTE    C'See you next time! Bye Bye~'    
                   . --------------------- variables -----------------------.
                   
-002AE  57....2E  instr       BYTE    C'Welcome to BB Game. Enter to start the game.'    
-002DA  00        stdin       BYTE    0    
-002DB  01        stdout      BYTE    1    
-002DC  000000    func        RESW    1    
+00397  00        stdin       BYTE    0    . 輸入裝置
+00398  01        stdout      BYTE    1    . 輸出裝置
+00399  000000    func        RESW    1    . 存 judger 的記憶體位址
+                  
+0039C            bye         END     first    . 結束程式碼

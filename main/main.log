@@ -1,75 +1,84 @@
 ***** Section <default> *****
-Stats: size=735  blocks=735  symbols=65  literals=0  relocations=0
+Stats: size=924  blocks=924  symbols=74  literals=0  relocations=0
 Blocks
     name        start   size  #ins #dir #sto
-    <default>   00000  002DF   179   16   10
+    <default>   00000  0039C   212   21    9
 Symbols
     name            hex       dec  scope     kind      type      description
-    GR           0000BC       188  local     relative  code      label
-    GR2          0000D7       215  local     relative  code      label
-    GRLP         0000E0       224  local     relative  code      label
-    IPLP         000290       656  local     relative  code      label
+    CLP          00036A       874  local     relative  code      label
+    GR           0000C4       196  local     relative  code      label
+    GR2          0000DF       223  local     relative  code      label
+    GRLP         0000E8       232  local     relative  code      label
+    IPLP         000346       838  local     relative  code      label
     MAIN         000000         0  exported  relative  code      label
-    PP1          0001BB       443  local     relative  code      label
-    PP1LP        0001BE       446  local     relative  code      label
-    PP2          0001CD       461  local     relative  code      label
-    PP2LP        0001D0       464  local     relative  code      label
-    PPI          0001F1       497  local     relative  code      label
-    PPILP        0001F4       500  local     relative  code      label
-    PTMAX        0000F8       248  local     relative  code      label
-    PTMIN        00010A       266  local     relative  code      label
-    clear        000239       569  local     relative  code      label
-    clearLp      00023C       572  local     relative  code      label
-    endInput     000272       626  local     relative  code      label
-    endl         00025A       602  local     relative  code      label
-    ffST         000284       644  local     relative  code      label
+    PP1          0001CF       463  local     relative  code      label
+    PP1LP        0001D2       466  local     relative  code      label
+    PP2          0001E1       481  local     relative  code      label
+    PP2LP        0001E4       484  local     relative  code      label
+    PPI          000207       519  local     relative  code      label
+    PPILP        00020A       522  local     relative  code      label
+    PTMAX        000100       256  local     relative  code      label
+    PTMIN        000112       274  local     relative  code      label
+    bye          00039C       924  local     relative  code      label
+    clear        0002E6       742  local     relative  code      label
+    clearLp      0002E9       745  local     relative  code      label
+    close        000367       871  local     relative  code      label
+    endInput     000325       805  local     relative  code      label
+    endMsg       00037C       892  local     relative  data      label
+    endl         000307       775  local     relative  code      label
+    ffST         000337       823  local     relative  code      label
     first        000000         0  local     relative  code      label
-    func         0002DC       732  local     relative  data      label
-    grMsg        000196       406  local     relative  data      label
-    inData       0002A5       677  local     relative  data      label
-    inputData    000018        24  local     relative  data      label
-    instr        0002AE       686  local     relative  data      label
-    judger       00001F        31  local     relative  code      label
-    limitL       0002A8       680  local     relative  data      label
-    limitR       0002AB       683  local     relative  data      label
-    lines        000254       596  local     relative  data      label
-    maxLP        0000FB       251  local     relative  code      label
-    maxMsg       00011C       284  local     relative  data      label
-    minLP        00010D       269  local     relative  code      label
-    minMsg       000123       291  local     relative  data      label
-    mode         000065       101  local     relative  data      label
-    mode1        000130       304  local     relative  code      label
-    mode2        00013F       319  local     relative  code      label
-    modeLP       0000BF       191  local     relative  code      label
-    modeMsg      00012A       298  local     relative  data      label
-    p1           000068       104  local     relative  code      label
-    p1Loop       000151       337  local     relative  code      label
-    p1Msg        00019E       414  local     relative  data      label
-    p1Num        00008F       143  local     relative  data      label
-    p1win        00014E       334  local     relative  code      label
-    p2           000092       146  local     relative  code      label
-    p2Loop       000169       361  local     relative  code      label
-    p2Msg        0001AB       427  local     relative  data      label
-    p2Num        0000B9       185  local     relative  data      label
-    p2win        000166       358  local     relative  code      label
-    ploop        000224       548  local     relative  code      label
-    pp1Msg       0001DF       479  local     relative  data      label
-    pp2Msg       0001E8       488  local     relative  data      label
-    ppiMsg       000203       515  local     relative  data      label
-    printInstr   00021B       539  local     relative  code      label
-    reInput      00029C       668  local     relative  code      label
-    stGameLp     000022        34  local     relative  code      label
-    startGame    000019        25  local     relative  code      label
+    func         000399       921  local     relative  data      label
+    grMsg        0001A4       420  local     relative  data      label
+    inData       00035E       862  local     relative  data      label
+    instr1       000282       642  local     relative  data      label
+    instr2       000295       661  local     relative  data      label
+    instr3       0002B1       689  local     relative  data      label
+    instr4       0002D2       722  local     relative  data      label
+    judger       000021        33  local     relative  code      label
+    limitL       000361       865  local     relative  data      label
+    limitR       000364       868  local     relative  data      label
+    lines        000301       769  local     relative  data      label
+    maxLP        000103       259  local     relative  code      label
+    maxMsg       000124       292  local     relative  data      label
+    minLP        000115       277  local     relative  code      label
+    minMsg       00012B       299  local     relative  data      label
+    mode         000067       103  local     relative  data      label
+    mode1        000138       312  local     relative  code      label
+    mode2        000147       327  local     relative  code      label
+    modeLP       0000C7       199  local     relative  code      label
+    modeMsg      000132       306  local     relative  data      label
+    p1           00006A       106  local     relative  code      label
+    p1Loop       000159       345  local     relative  code      label
+    p1Msg        0001AC       428  local     relative  data      label
+    p1Num        000094       148  local     relative  data      label
+    p1win        000156       342  local     relative  code      label
+    p2           000097       151  local     relative  code      label
+    p2Loop       000174       372  local     relative  code      label
+    p2Msg        0001B9       441  local     relative  data      label
+    p2Num        0000C1       193  local     relative  data      label
+    p2win        000171       369  local     relative  code      label
+    ploop1       00023A       570  local     relative  code      label
+    ploop2       00024C       588  local     relative  code      label
+    ploop3       00025E       606  local     relative  code      label
+    ploop4       000270       624  local     relative  code      label
+    pp1Msg       0001F3       499  local     relative  data      label
+    pp2Msg       0001FD       509  local     relative  data      label
+    ppiMsg       000219       537  local     relative  data      label
+    printInstr   000231       561  local     relative  code      label
+    reInput      000355       853  local     relative  code      label
+    stGameLp     000024        36  local     relative  code      label
+    startGame    00001B        27  local     relative  code      label
     startInput   000006         6  local     relative  code      label
-    startMsg     00004F        79  local     relative  data      label
-    stdInput     00026C       620  local     relative  code      label
-    stdin        0002DA       730  local     relative  data      label
-    stdout       0002DB       731  local     relative  data      label
-    tie          00017E       382  local     relative  code      label
-    tieLoop      000181       385  local     relative  code      label
-    tieMsg       0001B8       440  local     relative  data      label
-    tmp          000269       617  local     relative  data      label
-    tmpLine      000257       599  local     relative  data      label
+    startMsg     000051        81  local     relative  data      label
+    stdInput     000319       793  local     relative  code      label
+    stdin        000397       919  local     relative  data      label
+    stdout       000398       920  local     relative  data      label
+    tie          00018C       396  local     relative  code      label
+    tieLoop      00018F       399  local     relative  code      label
+    tieMsg       0001C6       454  local     relative  data      label
+    tmp          000316       790  local     relative  data      label
+    tmpLine      000304       772  local     relative  data      label
 Literals
     label   definition
 Relocations
